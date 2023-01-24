@@ -108,8 +108,7 @@ try {
 }
 
 // Start playlist generator
-refreshSongList(spotifyApi, config.data.playlistIds.input, songs.data);
-
+await refreshSongList(spotifyApi, config.data.playlistIds.input, songs.data);
 
 // Finally write config content to file
 await Promise.all([config.write(), songs.write()]);
