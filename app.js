@@ -7,7 +7,7 @@ import { JSONFile } from 'lowdb/node';
 import SpotifyWebApi from 'spotify-web-api-node';
 import PromptSync from 'prompt-sync';
 
-import { refreshSongList } from './modules/PlaylistGenerator.js';
+import { refreshSongList, generateWeeklySongList } from './modules/PlaylistGenerator.js';
 
 const promptSync = PromptSync();
 
@@ -37,14 +37,21 @@ config.data ||=
         output: null
     },
     options: {
-        songCount: 25
+        songCount: 25,
+        matchWeights: {
+            similarReleaseDate: 0.4,
+            differentArtist: 0.2,
+            lastSelected: 0.4,
+            recentlyAdded: 0
+        }
     } 
 };
 
-songs.data ||= {};
+songs.data ||= [];
 
 if (config.data.spotifyApiCredentials.clientId === null) {
     await config.write();
+    console.log("Please enter your spotify credentials in config.json");
     process.exit();
 }
 
@@ -109,6 +116,10 @@ try {
 
 // Start playlist generator
 await refreshSongList(spotifyApi, config.data.playlistIds.input, songs.data);
+
+// Get weekly songs
+var weeklySongs = generateWeeklySongList(songs.data, config.data.options);
+console.log(weeklySongs);
 
 // Finally write config content to file
 await Promise.all([config.write(), songs.write()]);
