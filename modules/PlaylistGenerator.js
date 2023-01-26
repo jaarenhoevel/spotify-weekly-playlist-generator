@@ -69,7 +69,7 @@ export function generateWeeklySongList(songs, options) {
 }
 
 function calculateMatchScore(baseSong, song, weights) {
-    const { similarReleaseDate, differentArtist, lastSelected, recentlyAdded } = weights;
+    const { similarReleaseDate, similarAddedDate, lastSelected, recentlyAdded } = weights;
 
     var score = 0;
 
@@ -77,7 +77,9 @@ function calculateMatchScore(baseSong, song, weights) {
     const similarReleaseDateScore = Math.max(0, 1 - (releaseDateDiff / 1000 / 60 / 60 / 24 / 365 / 50)); // > 25 years -> 0 score
     score += similarReleaseDateScore * similarReleaseDate;
 
-    score += differentArtist * (baseSong.artistId !== song.artistId);
+    const addedDateDiff = Math.abs(new Date(baseSong.addedAt) - new Date(song.addedAt));
+    const similarAddedDateScore = Math.max(0, 1 - (addedDateDiff / 1000 / 60 / 60 / 24 / 31)); // > 31 days -> 0 score
+    score += similarAddedDateScore * similarAddedDate;
 
     if (song.lastSelected !== null) {
         const timeSinceLastSelected = Date.now() - new Date(song.lastSelected);

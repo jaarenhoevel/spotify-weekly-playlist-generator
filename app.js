@@ -40,8 +40,8 @@ config.data ||=
         songCount: 25,
         maxSongsPerArtist: 2,
         matchWeights: {
-            similarReleaseDate: 0.4,
-            differentArtist: 0.2,
+            similarReleaseDate: 0.3,
+            similarAddedDate: 0.3,
             lastSelected: 0.4,
             recentlyAdded: 0
         }
