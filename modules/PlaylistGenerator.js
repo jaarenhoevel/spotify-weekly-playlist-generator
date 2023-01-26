@@ -32,7 +32,7 @@ export async function refreshSongList(spotifyApi, playlistId, songs) {
 }
 
 export function generateWeeklySongList(songs, options) {
-    const { songCount, matchWeights } = options;
+    const { songCount, maxSongsPerArtist, matchWeights } = options;
 
     var weeklySongs = [...songs]; // copy song array
 
@@ -52,6 +52,14 @@ export function generateWeeklySongList(songs, options) {
     // Sort songs by match score
     weeklySongs.sort((a, b) => {
         return calculateMatchScore(baseSong, b, matchWeights) - calculateMatchScore(baseSong, a, matchWeights);
+    });
+
+    // Remove songs if too many songs from artist already in array
+    const artistTrackCount = {};
+    weeklySongs = weeklySongs.filter(s => {
+        if (!(s.artistId in artistTrackCount)) artistTrackCount[s.artistId] = 0;
+
+        return artistTrackCount[s.artistId] ++ < maxSongsPerArtist;
     });
 
     // Select songs: Use best matching tracks
