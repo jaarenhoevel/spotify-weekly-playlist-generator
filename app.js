@@ -44,7 +44,8 @@ config.data ||=
             lastSelected: 0.4,
             recentlyAdded: 0
         }
-    } 
+    },
+    dryRun: false
 };
 
 songs.data ||= [];
@@ -103,23 +104,24 @@ if (config.data.spotifyApiCredentials.refreshToken === null) {
 // Get access token
 spotifyApi.setRefreshToken(config.data.spotifyApiCredentials.refreshToken);
 
-try {
-    var data = await spotifyApi.refreshAccessToken();
-    console.log('The access token has been refreshed!');
-  
-    // Save the access token so that it's used in future calls
-    spotifyApi.setAccessToken(data.body['access_token']);
-} catch (e) {
-    console.log('Could not refresh access token', err);
-    process.exit();  
+if (!config.data.dryRun) {
+    try {
+        var data = await spotifyApi.refreshAccessToken();
+        console.log('The access token has been refreshed!');
+      
+        // Save the access token so that it's used in future calls
+        spotifyApi.setAccessToken(data.body['access_token']);
+    } catch (e) {
+        console.log('Could not refresh access token', err);
+        process.exit();  
+    }
 }
 
 // Start playlist generator
-await refreshSongList(spotifyApi, config.data.playlistIds.input, songs.data);
+if (!config.data.dryRun) await refreshSongList(spotifyApi, config.data.playlistIds.input, songs.data);
 
 // Get weekly songs
 var weeklySongs = generateWeeklySongList(songs.data, config.data.options);
-console.log(weeklySongs);
 
 // Finally write config content to file
 await Promise.all([config.write(), songs.write()]);
