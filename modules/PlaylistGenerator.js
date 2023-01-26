@@ -102,4 +102,17 @@ export async function replacePlaylistSongs(spotifyApi, playlistId, songs) {
     } catch (e) {
         console.log(e);
     }
-} 
+}
+
+export async function updatePlaylistDescription(spotifyApi, playlistId, options) {
+    const { playlistDescriptionTemplate } = options;
+
+    const date = new Date();
+    const description = playlistDescriptionTemplate.replace("%d", `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`);
+
+    try {
+        spotifyApi.changePlaylistDetails(playlistId, { description: description });
+    } catch (e) {
+        console.log(e);
+    }   
+}
