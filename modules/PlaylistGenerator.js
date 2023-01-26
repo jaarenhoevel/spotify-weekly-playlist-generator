@@ -95,3 +95,11 @@ function calculateMatchScore(baseSong, song, weights) {
 
     return score;
 }
+
+export async function replacePlaylistSongs(spotifyApi, playlistId, songs) {
+    try {
+        await spotifyApi.replaceTracksInPlaylist(playlistId, songs.map(song => "spotify:track:" + song.id)); // works for up to 100 tracks
+    } catch (e) {
+        console.log(e);
+    }
+} 
