@@ -31,6 +31,16 @@ export async function refreshSongList(spotifyApi, playlistId, songs) {
     console.log(`Added ${addedTracks} tracks to song list.`);
 }
 
+export function updateSongListLastSelected(songs, selectedSongs) {
+    selectedSongs.forEach(selectedSong => {
+        const matchingSong = songs.find(song => {return song.id === selectedSong.id});
+
+        if (matchingSong === undefined) return console.log("Selected song was not found in song list");
+
+        matchingSong.lastSelected = new Date().toISOString();
+    });
+}
+
 export function generateWeeklySongList(songs, options) {
     const { songCount, maxSongsPerArtist, matchWeights } = options;
 

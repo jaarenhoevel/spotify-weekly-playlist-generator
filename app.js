@@ -7,7 +7,7 @@ import { JSONFile } from 'lowdb/node';
 import SpotifyWebApi from 'spotify-web-api-node';
 import PromptSync from 'prompt-sync';
 
-import { refreshSongList, generateWeeklySongList, replacePlaylistSongs, updatePlaylistDescription } from './modules/PlaylistGenerator.js';
+import { refreshSongList, generateWeeklySongList, replacePlaylistSongs, updatePlaylistDescription, updateSongListLastSelected } from './modules/PlaylistGenerator.js';
 
 const promptSync = PromptSync();
 
@@ -120,10 +120,13 @@ if (!config.data.dryRun) {
 }
 
 // Start playlist generator
-//if (!config.data.dryRun) await refreshSongList(spotifyApi, config.data.playlistIds.input, songs.data);
+if (!config.data.dryRun) await refreshSongList(spotifyApi, config.data.playlistIds.input, songs.data);
 
 // Get weekly songs
 var weeklySongs = generateWeeklySongList(songs.data, config.data.options);
+
+// Set last selected for selected songs
+if (!config.data.dryRun) updateSongListLastSelected(songs.data, weeklySongs);
 
 // Update output playlist
 if (!config.data.dryRun) await replacePlaylistSongs(spotifyApi, config.data.playlistIds.output, weeklySongs);
