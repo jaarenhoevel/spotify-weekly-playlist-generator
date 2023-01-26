@@ -54,6 +54,7 @@ export function generateWeeklySongList(songs, options) {
         return calculateMatchScore(baseSong, b, matchWeights) - calculateMatchScore(baseSong, a, matchWeights);
     });
 
+    // Select songs: Use best matching tracks
     weeklySongs = weeklySongs.slice(0, songCount - 1);
     weeklySongs.push(baseSong);
     return weeklySongs;
